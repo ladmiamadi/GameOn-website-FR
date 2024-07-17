@@ -5,7 +5,7 @@
  */
 function checkFirstName(firstName) {
     if(firstName.trim().length < 2) {
-        const error = new Error("Le prénom est trop court");
+        const error = new Error("Veuillez entrer 2 caractères ou plus pour le champ du prénom.");
         error.name = "first";
         throw error;
     } else {
@@ -20,7 +20,7 @@ function checkFirstName(firstName) {
  */
 function checkLastName(lastName) {
     if(lastName.trim().length < 2) {
-        const error = new Error("Le nom est trop court");
+        const error = new Error("Veuillez entrer 2 caractères ou plus pour le champ du nom.");
         error.name = "last";
         throw error;
     }else {
@@ -37,7 +37,7 @@ function checkEmail(email) {
     let regex = new RegExp("[a-z0-9._-]+@[a-z0-9._-]+\\.[a-z0-9._-]+");
 
     if(!regex.test(email)) {
-        const error =  new Error("l\'email n\'est pas valide");
+        const error =  new Error("L\'email n\'est pas valide");
         error.name = "email";
         throw error;
     }else {
@@ -54,7 +54,7 @@ function checkBirthDate(birthDate) {
     let regex = new RegExp("\\d{4}-\\d{1,2}-\\d{1,2}");
 
     if(!regex.test(birthDate)) {
-        const error = new Error("la date de naissance n\'est pas valide");
+        const error = new Error("Vous devez entrer votre date de naissance.");
         error.name = "birthdate";
         throw error;
     } else {
@@ -86,10 +86,10 @@ function checkLocation(locations) {
     let checked = Array.from(locations).filter(location => location.checked);
 
     if(checked.length < 1) {
-        const error = new Error("Veuillez choisir une location");
+        const error = new Error("Vous devez choisir une option.");
         error.name = "location1";
         throw error;
-    }else {
+    } else {
         removeErrorMessage("location1");
     }
 }
@@ -104,11 +104,16 @@ function checkConditions (condition) {
         const error = new Error("Veuillez accepter les conditions d\'utilisation");
         error.name = "conditions";
         throw error;
-    }else {
+    } else {
         removeErrorMessage("conditions");
     }
 }
 
+/**
+ *
+ * @param {string} id
+ * @param {string} message
+ */
 function displayErrorMessage(id, message) {
     let input = document.getElementById(id);
     let spanErrorMessage = document.getElementById("errorMessage" + id);
@@ -124,6 +129,10 @@ function displayErrorMessage(id, message) {
     }
 }
 
+/**
+ *
+ * @param {string} id
+ */
 function removeErrorMessage (id) {
     let spanErrorMessage = document.getElementById("errorMessage" + id);
     if(spanErrorMessage) {
@@ -131,6 +140,13 @@ function removeErrorMessage (id) {
         input.classList.remove("error-input");
         spanErrorMessage.remove();
     }
+}
+
+function register () {
+    closeModal();
+    form.reset();
+
+    alert("Merci ! Votre réservation a été reçue.");
 }
 
 let form = document.querySelector("form");
@@ -155,8 +171,9 @@ form.addEventListener("submit", (event) => {
         checkLocation(locations);
         checkConditions(condition.checked);
 
+        register();
+
     } catch (error) {
         displayErrorMessage(error.name , error.message);
     }
-
 })

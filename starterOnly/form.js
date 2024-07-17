@@ -5,7 +5,11 @@
  */
 function checkFirstName(firstName) {
     if(firstName.trim().length < 2) {
-        throw new Error("Le prénom est trop court");
+        const error = new Error("Le prénom est trop court");
+        error.name = "first";
+        throw error;
+    } else {
+        removeErrorMessage("first");
     }
 }
 
@@ -16,7 +20,11 @@ function checkFirstName(firstName) {
  */
 function checkLastName(lastName) {
     if(lastName.trim().length < 2) {
-        throw new Error("Le nom est trop court");
+        const error = new Error("Le nom est trop court");
+        error.name = "last";
+        throw error;
+    }else {
+        removeErrorMessage("last");
     }
 }
 
@@ -29,7 +37,11 @@ function checkEmail(email) {
     let regex = new RegExp("[a-z0-9._-]+@[a-z0-9._-]+\\.[a-z0-9._-]+");
 
     if(!regex.test(email)) {
-        throw new Error("l\'email n\'est pas valide");
+        const error =  new Error("l\'email n\'est pas valide");
+        error.name = "email";
+        throw error;
+    }else {
+        removeErrorMessage("email");
     }
 }
 
@@ -42,7 +54,11 @@ function checkBirthDate(birthDate) {
     let regex = new RegExp("\\d{4}-\\d{1,2}-\\d{1,2}");
 
     if(!regex.test(birthDate)) {
-        throw new Error("la date de naissance n\'est pas valide");
+        const error = new Error("la date de naissance n\'est pas valide");
+        error.name = "birthdate";
+        throw error;
+    } else {
+        removeErrorMessage("birthdate");
     }
 }
 
@@ -53,7 +69,11 @@ function checkBirthDate(birthDate) {
  */
 function checkQuantity(quantity) {
     if(parseInt(quantity) < 0 || quantity.length <1) {
-        throw new Error("Le nombre de tournois n\'est pas valide");
+        const error = new Error("Le nombre de tournois n\'est pas valide");
+        error.name = "quantity";
+        throw error;
+    } else {
+        removeErrorMessage("quantity")
     }
 }
 
@@ -63,17 +83,14 @@ function checkQuantity(quantity) {
  * @throws {Error}
  */
 function checkLocation(locations) {
-    /*let checked = false;
-        for(let i =0; i< locations.length ; i++) {
-        if(locations[i].checked) checked=true
-    }
-    if (!checked) {
-        throw new Error("veuillez choisir une location");
-    }*/
     let checked = Array.from(locations).filter(location => location.checked);
 
-    if(checked.length <1) {
-        throw new Error("Veuillez choisir une location");
+    if(checked.length < 1) {
+        const error = new Error("Veuillez choisir une location");
+        error.name = "location1";
+        throw error;
+    }else {
+        removeErrorMessage("location1");
     }
 }
 
@@ -84,10 +101,37 @@ function checkLocation(locations) {
  */
 function checkConditions (condition) {
     if (!condition) {
-        throw new Error("Veuillez accepter les conditions d\'utilisation");
+        const error = new Error("Veuillez accepter les conditions d\'utilisation");
+        error.name = "conditions";
+        throw error;
+    }else {
+        removeErrorMessage("conditions");
     }
 }
 
+function displayErrorMessage(id, message) {
+    let input = document.getElementById(id);
+    let spanErrorMessage = document.getElementById("errorMessage" + id);
+
+    if(!spanErrorMessage) {
+        spanErrorMessage = document.createElement("span");
+        spanErrorMessage.id = "errorMessage" + id;
+
+        spanErrorMessage.innerText = message;
+        spanErrorMessage.classList.add("error-message");
+        input.parentNode.appendChild(spanErrorMessage);
+        input.classList.add("error-input")
+    }
+}
+
+function removeErrorMessage (id) {
+    let spanErrorMessage = document.getElementById("errorMessage" + id);
+    if(spanErrorMessage) {
+        let input = document.getElementById(id);
+        input.classList.remove("error-input");
+        spanErrorMessage.remove();
+    }
+}
 
 let form = document.querySelector("form");
 
@@ -112,7 +156,7 @@ form.addEventListener("submit", (event) => {
         checkConditions(condition.checked);
 
     } catch (error) {
-        console.log(error.message);
+        displayErrorMessage(error.name , error.message);
     }
 
 })

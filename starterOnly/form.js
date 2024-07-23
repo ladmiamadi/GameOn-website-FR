@@ -5,9 +5,9 @@
  */
 function checkFirstName(firstName) {
     if(firstName.trim().length < 2) {
-        const error = new Error("Veuillez entrer 2 caractères ou plus pour le champ du prénom.");
+        let error = new Error("Veuillez entrer 2 caractères ou plus pour le champ du prénom.");
         error.name = "first";
-        throw error;
+        displayErrorMessage(error.name, error.message);
     } else {
         removeErrorMessage("first");
     }
@@ -22,8 +22,8 @@ function checkLastName(lastName) {
     if(lastName.trim().length < 2) {
         const error = new Error("Veuillez entrer 2 caractères ou plus pour le champ du nom.");
         error.name = "last";
-        throw error;
-    }else {
+        displayErrorMessage(error.name, error.message);
+    } else {
         removeErrorMessage("last");
     }
 }
@@ -39,8 +39,8 @@ function checkEmail(email) {
     if(!regex.test(email)) {
         const error =  new Error("L\'email n\'est pas valide");
         error.name = "email";
-        throw error;
-    }else {
+        displayErrorMessage(error.name, error.message);
+    } else {
         removeErrorMessage("email");
     }
 }
@@ -56,7 +56,7 @@ function checkBirthDate(birthDate) {
     if(!regex.test(birthDate)) {
         const error = new Error("Vous devez entrer votre date de naissance.");
         error.name = "birthdate";
-        throw error;
+        displayErrorMessage(error.name, error.message);
     } else {
         removeErrorMessage("birthdate");
     }
@@ -69,11 +69,11 @@ function checkBirthDate(birthDate) {
  */
 function checkQuantity(quantity) {
     if(parseInt(quantity) < 0 || quantity.length <1) {
-        const error = new Error("Le nombre de tournois n\'est pas valide");
+        let error = new Error("Le nombre de tournois n\'est pas valide");
         error.name = "quantity";
-        throw error;
+        displayErrorMessage(error.name, error.message);
     } else {
-        removeErrorMessage("quantity")
+        removeErrorMessage("quantity");
     }
 }
 
@@ -85,10 +85,10 @@ function checkQuantity(quantity) {
 function checkLocation(locations) {
     let checked = Array.from(locations).filter(location => location.checked);
 
-    if(checked.length < 1) {
+    if(checked.length === 0) {
         const error = new Error("Vous devez choisir une option.");
         error.name = "location1";
-        throw error;
+        displayErrorMessage(error.name, error.message);
     } else {
         removeErrorMessage("location1");
     }
@@ -103,7 +103,7 @@ function checkConditions (condition) {
     if (!condition) {
         const error = new Error("Veuillez accepter les conditions d\'utilisation");
         error.name = "conditions";
-        throw error;
+        displayErrorMessage(error.name, error.message);
     } else {
         removeErrorMessage("conditions");
     }
@@ -132,6 +132,7 @@ function displayErrorMessage(id, message) {
 /**
  *
  * @param {string} id
+ * this function remove error messages after validating input
  */
 function removeErrorMessage (id) {
     let spanErrorMessage = document.getElementById("errorMessage" + id);
@@ -142,11 +143,49 @@ function removeErrorMessage (id) {
     }
 }
 
-function register () {
-    closeModal();
-    form.reset();
+function closeForm() {
 
-    alert("Merci ! Votre réservation a été reçue.");
+}
+
+/**
+ * this function display the confirmation message after validating form
+ */
+function register () {
+    let modal = document.querySelector(".modal-body");
+    let closeButton = document.createElement("button");
+    let confirmMessage = document.createElement("h3");
+
+    confirmMessage.innerText = "Merci pour votre inscription";
+    closeButton.innerText = "Fermer";
+
+    confirmMessage.classList.add("confirm-message");
+    closeButton.classList.add("button");
+    closeButton.classList.add("btn-submit");
+    modal.classList.add("modal-body-confirm");
+
+    //remove the form from modal and display confirmation message and close button
+    form.reset();
+    form.style.display = "none";
+    modal.appendChild(confirmMessage);
+    modal.appendChild(closeButton);
+
+    closeButton.addEventListener("click", () => {
+        closeModal();
+        modal.classList.remove("modal-body-confirm");
+        closeButton.remove();
+        confirmMessage.remove();
+        form.style.display = "block";
+    });
+}
+
+function validateForm (firstName, lastName, email, birthDate, quantity, locations, condition) {
+    checkFirstName(firstName);
+    checkLastName(lastName);
+    checkEmail(email);
+    checkBirthDate(birthDate);
+    checkQuantity(quantity);
+    checkLocation(locations);
+    checkConditions(condition);
 }
 
 let form = document.querySelector("form");
@@ -154,26 +193,16 @@ let form = document.querySelector("form");
 form.addEventListener("submit", (event) => {
     event.preventDefault();
 
-    try {
-        let firstName = document.getElementById("first");
-        let lastName = document.getElementById("last");
-        let email = document.getElementById("email");
-        let birthDate = document.getElementById("birthdate");
-        let quantity = document.getElementById("quantity");
-        let locations = document.querySelectorAll("input[type=radio]");
-        let condition = document.getElementById("conditions");
+    let firstName = document.getElementById("first");
+    let lastName = document.getElementById("last");
+    let email = document.getElementById("email");
+    let birthDate = document.getElementById("birthdate");
+    let quantity = document.getElementById("quantity");
+    let locations = document.querySelectorAll("input[type=radio]");
+    let condition = document.getElementById("conditions");
 
-        checkFirstName(firstName.value);
-        checkLastName(lastName.value);
-        checkEmail(email.value);
-        checkBirthDate(birthDate.value);
-        checkQuantity(quantity.value);
-        checkLocation(locations);
-        checkConditions(condition.checked);
+    validateForm(firstName.value, lastName.value, email.value, birthDate.value, quantity.value, locations, condition.checked);
 
-        register();
-
-    } catch (error) {
-        displayErrorMessage(error.name , error.message);
-    }
+    let errors = document.querySelectorAll("[id^='errorMessage']");
+    if (errors.length === 0) register();
 })

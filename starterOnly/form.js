@@ -79,7 +79,7 @@ function checkQuantity(quantity) {
 
 /**
  *
- * @param {Object} locations
+ * @param {NodeList} locations
  * @throws {Error}
  */
 function checkLocation(locations) {
@@ -132,7 +132,7 @@ function displayErrorMessage(id, message) {
 /**
  *
  * @param {string} id
- * this function remove error messages after validating input
+ * remove error messages after validating input
  */
 function removeErrorMessage (id) {
     let spanErrorMessage = document.getElementById("errorMessage" + id);
@@ -143,12 +143,8 @@ function removeErrorMessage (id) {
     }
 }
 
-function closeForm() {
-
-}
-
 /**
- * this function display the confirmation message after validating form
+ * display the confirmation message after validating form
  */
 function register () {
     let modal = document.querySelector(".modal-body");
@@ -158,41 +154,31 @@ function register () {
     confirmMessage.innerText = "Merci pour votre inscription";
     closeButton.innerText = "Fermer";
 
+    confirmMessage.id = "confirmMessage";
+    closeButton.id = "closeButton";
+
     confirmMessage.classList.add("confirm-message");
     closeButton.classList.add("button");
     closeButton.classList.add("btn-submit");
     modal.classList.add("modal-body-confirm");
 
-    //remove the form from modal and display confirmation message and close button
+    //remove the form from modal and display confirmation message with the close button
     form.reset();
-    form.style.display = "none";
+    //form.style.display = "none";
+
+    form.classList.add("hide");
+    form.classList.remove("display");
+
     modal.appendChild(confirmMessage);
     modal.appendChild(closeButton);
 
     closeButton.addEventListener("click", () => {
         closeModal();
-        modal.classList.remove("modal-body-confirm");
-        closeButton.remove();
-        confirmMessage.remove();
-        form.style.display = "block";
     });
 }
 
-function validateForm (firstName, lastName, email, birthDate, quantity, locations, condition) {
-    checkFirstName(firstName);
-    checkLastName(lastName);
-    checkEmail(email);
-    checkBirthDate(birthDate);
-    checkQuantity(quantity);
-    checkLocation(locations);
-    checkConditions(condition);
-}
-
-let form = document.querySelector("form");
-
-form.addEventListener("submit", (event) => {
-    event.preventDefault();
-
+function validateForm () {
+    //DOM elements
     let firstName = document.getElementById("first");
     let lastName = document.getElementById("last");
     let email = document.getElementById("email");
@@ -201,7 +187,20 @@ form.addEventListener("submit", (event) => {
     let locations = document.querySelectorAll("input[type=radio]");
     let condition = document.getElementById("conditions");
 
-    validateForm(firstName.value, lastName.value, email.value, birthDate.value, quantity.value, locations, condition.checked);
+    checkFirstName(firstName.value);
+    checkLastName(lastName.value);
+    checkEmail(email.value);
+    checkBirthDate(birthDate.value);
+    checkQuantity(quantity.value);
+    checkLocation(locations);
+    checkConditions(condition.checked);
+}
+
+let form = document.querySelector("form");
+
+form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    validateForm();
 
     let errors = document.querySelectorAll("[id^='errorMessage']");
     if (errors.length === 0) register();

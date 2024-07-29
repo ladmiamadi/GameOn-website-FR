@@ -11,7 +11,6 @@ function editNav() {
 // DOM Elements
 const modalbg = document.querySelector(".bground");
 const modalBtn = document.querySelectorAll(".modal-btn");
-
 const modalClose = document.querySelector(".close");
 
 // launch modal event
@@ -22,11 +21,30 @@ modalClose.addEventListener("click", closeModal)
 
 // launch modal form
 function launchModal() {
-  modalbg.style.display = "block";
+  modalbg.classList.add("display");
+  modalbg.classList.remove("hide");
 }
 
+/**
+ * close the modal form
+ */
 function closeModal() {
-   modalbg.style.display = "none";
+  let modal = document.querySelector(".modal-body");
+
+  let closeButton = document.getElementById("closeButton");
+  let confirmMessage = document.getElementById("confirmMessage");
+
+  if(confirmMessage && closeButton) {
+    closeButton.remove();
+    confirmMessage.remove();
+
+    modal.classList.remove("modal-body-confirm");
+    form.classList.remove("hide");
+    form.classList.add("display");
+  }
+
+  modalbg.classList.add("hide");
+  modalbg.classList.remove("display");
 }
 
 

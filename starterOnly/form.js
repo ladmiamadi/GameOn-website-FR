@@ -178,31 +178,44 @@ function register () {
     });
 }
 
-function validateForm () {
-    //DOM elements
-    let firstName = document.getElementById("first");
-    let lastName = document.getElementById("last");
-    let email = document.getElementById("email");
-    let birthDate = document.getElementById("birthdate");
-    let quantity = document.getElementById("quantity");
-    let locations = document.querySelectorAll("input[type=radio]");
-    let condition = document.getElementById("conditions");
-
-    checkFirstName(firstName.value);
-    checkLastName(lastName.value);
-    checkEmail(email.value);
-    checkBirthDate(birthDate.value);
-    checkQuantity(quantity.value);
+function validateForm (firstName, lastName, email, birthDate, quantity, locations, condition) {
+    checkFirstName(firstName);
+    checkLastName(lastName);
+    checkEmail(email);
+    checkBirthDate(birthDate);
+    checkQuantity(quantity);
     checkLocation(locations);
-    checkConditions(condition.checked);
+    checkConditions(condition);
 }
 
 let form = document.querySelector("form");
 
 form.addEventListener("submit", (event) => {
     event.preventDefault();
-    validateForm();
+
+    //DOM elements
+    let firstName = document.getElementById("first").value;
+    let lastName = document.getElementById("last").value;
+    let email = document.getElementById("email").value;
+    let birthDate = document.getElementById("birthdate").value;
+    let quantity = document.getElementById("quantity").value;
+    let locations = document.querySelectorAll("input[type=radio]");
+    let condition = document.getElementById("conditions").checked;
+
+    validateForm(firstName, lastName, email, birthDate, quantity, locations, condition);
 
     let errors = document.querySelectorAll("[id^='errorMessage']");
-    if (errors.length === 0) register();
+    if (errors.length === 0) {
+        console.log(`
+            Prénom: ${firstName}, 
+            Nom: ${lastName}, 
+            email: ${email}, 
+            Date de naissance: ${birthDate}
+            Nombre de tournois: ${quantity}, 
+            Tournois: ${Array.from(locations).filter(location => location.checked).map(el => el.value)}, 
+            Conditions d'utilisation: ${condition ? 'Acceptées': ''}
+            `);
+
+        register();
+    }
 })

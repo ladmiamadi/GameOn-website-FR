@@ -136,6 +136,7 @@ function displayErrorMessage(id, message) {
  */
 function removeErrorMessage (id) {
     let spanErrorMessage = document.getElementById("errorMessage" + id);
+
     if(spanErrorMessage) {
         let input = document.getElementById(id);
         input.classList.remove("error-input");
